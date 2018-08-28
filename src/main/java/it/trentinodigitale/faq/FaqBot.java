@@ -40,7 +40,7 @@ public class FaqBot extends ContextBot {
     }
 
 //    private void operationButton(Update update) {
-//        String message_text = update.getCallbackQuery()==null?update.getMessage().getText():update.getCallbackQuery().getData();
+//        String message_text = update.getCallbackQuery()==null?update.getMessageApplication().getText():update.getCallbackQuery().getData();
 //        this.operation(update, message_text);
 //    }
 

@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
  * <p>
  * Useful class which:
  * - save the user in a local variable
- * - define the method getMessage(...)
+ * - define the method getMessageApplication(...)
  */
 public class MessageBundleBuilder {
 

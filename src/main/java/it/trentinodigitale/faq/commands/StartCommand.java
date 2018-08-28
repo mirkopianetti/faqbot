@@ -52,8 +52,6 @@ public class StartCommand extends Commands{
 
 
         message.setText(testoDiPresentazione.toString()).enableHtml(true);
-        /*log(user_first_name, user_last_name, Long.toString(update.getMessage().getChatId()), update.getMessage().getText(), message.getText(),"");*/
-
         return message;
 
     }

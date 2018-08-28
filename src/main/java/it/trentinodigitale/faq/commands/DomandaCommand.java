@@ -2,6 +2,7 @@ package it.trentinodigitale.faq.commands;
 
 import com.vdurmont.emoji.EmojiParser;
 import dao.FaqSolr;
+import dao.RicercheDB;
 import it.trentinodigitale.faq.ContextBot;
 import org.apache.solr.common.SolrDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -31,20 +32,19 @@ public class DomandaCommand extends Commands{
 
         StringBuffer testoDiPresentazione = new StringBuffer("\n");
 
-        message.setText(testoDiPresentazione.toString()).enableHtml(true);
-
-
         try {
             FaqSolr faqSolr = new FaqSolr();
-            List<SolrDocument> listaRisultati = faqSolr.getResult("3",null,null, update.getMessage().getText(),null);
+            List<SolrDocument> listaRisultati = faqSolr.getResult(applicationBuilder.getMessageApplication("sorl.azienda"),null,null, update.getMessage().getText(),null);
+
+            //Salvo la domanda nella base dati
+            RicercheDB ricercheDB  = new RicercheDB();
+            ricercheDB.insertDocument(new Integer(message.getChatId()),update.getMessage().getText(),listaRisultati.size());
+
 
 
             if (listaRisultati.size()==0){
-
                 testoDiPresentazione.append("NON ho trovato risposte inerenti la dua domanda, puoi riformularla in modo differente?: \n");
             }else {
-
-
                 if (listaRisultati.size()>0) {
 
                     SolrDocument solrDocument = listaRisultati
@@ -52,19 +52,15 @@ public class DomandaCommand extends Commands{
                             .findFirst().get();
 
                     scriviPrimaFaq(solrDocument, testoDiPresentazione);
-
                 }
-
                 if (listaRisultati.size()>1) {
                     preparaBottoni(message);
                 }
                 preparaBottoniInLinea(message,context);
 
-
             }
 
         }catch (Exception ie){
-
 
         }
 
@@ -81,7 +77,7 @@ public class DomandaCommand extends Commands{
         stringBuffer.append("<b>" + solrDocument.getFieldValue("domanda")  + "</b> \n" );
 
         String risposta = solrDocument.getFieldValue("risposta").toString();
-        stringBuffer.append(risposta.length()>200?risposta.substring(0,300):risposta + "\n");
+        stringBuffer.append(risposta.length()>200?risposta.substring(0,200):risposta + "\n");
 
         if(solrDocument.getFieldValue("url")!=null) {
             stringBuffer.append(solrDocument.getFieldValue("url"));
@@ -120,7 +116,11 @@ public class DomandaCommand extends Commands{
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        rowInline.add(new InlineKeyboardButton().setText(EmojiParser.parseToUnicode(" :mega: ALTRE RISPOSTE" )).setCallbackData("OTHER:param:" + context.message_text));
+
+//        context.message_text
+
+
+        rowInline.add(new InlineKeyboardButton().setText(EmojiParser.parseToUnicode(" :mega: ALTRE RISPOSTE" )).setCallbackData("OTHER:param:" ));
         rowsInline.add(rowInline);
 
         rowInline = new ArrayList<>();

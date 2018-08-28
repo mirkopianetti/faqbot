@@ -31,10 +31,10 @@ public abstract class Commands {
     }
 
    /* protected Long getChatID(){
-        if (update.getMessage()!=null && update.getMessage().getChatId()!=null ){
-            return update.getMessage().getChatId();
-        }else if(update.getCallbackQuery()!=null && update.getCallbackQuery().getMessage()!=null && update.getCallbackQuery().getMessage().getChatId()!=null){
-            return update.getCallbackQuery().getMessage().getChatId();
+        if (update.getMessageApplication()!=null && update.getMessageApplication().getChatId()!=null ){
+            return update.getMessageApplication().getChatId();
+        }else if(update.getCallbackQuery()!=null && update.getCallbackQuery().getMessageApplication()!=null && update.getCallbackQuery().getMessageApplication().getChatId()!=null){
+            return update.getCallbackQuery().getMessageApplication().getChatId();
         }else {
             return  null;
         }

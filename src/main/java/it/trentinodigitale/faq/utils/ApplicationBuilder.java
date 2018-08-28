@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
  * <p>
  * Useful class which:
  * - save the user in a local variable
- * - define the method getMessage(...)
+ * - define the method getMessageApplication(...)
  */
 @Service
 public class ApplicationBuilder {
@@ -22,13 +22,31 @@ public class ApplicationBuilder {
      * @param params params
      * @return value of 'msg' contained in the user's Locale ResourceBundle
      */
-    public String getMessage(String msg, String... params) {
+    public String getMessageApplication(String msg, String... params) {
+        ResourceBundle bundle = ResourceBundle.getBundle("Application");
+        MessageFormat formatter = new MessageFormat("");
+        /*formatter.setLocale("");*/
+        formatter.applyPattern(bundle.getString(msg));
+        return formatter.format(params);
+    }
+
+    public String getMessageBundle(String msg, String... params) {
+        ResourceBundle bundle = ResourceBundle.getBundle("MessageBundle");
+        MessageFormat formatter = new MessageFormat("");
+        /*formatter.setLocale("");*/
+        formatter.applyPattern(bundle.getString(msg));
+        return formatter.format(params);
+    }
+
+    public String getMessageDB(String msg, String... params) {
 
 
-        ResourceBundle bundle = ResourceBundle.getBundle("application");
+        ResourceBundle bundle = ResourceBundle.getBundle("Database");
         MessageFormat formatter = new MessageFormat("");
         /*formatter.setLocale("");*/
         formatter.applyPattern(bundle.getString(msg));
         return formatter.format(params);
     }
 }
+
+

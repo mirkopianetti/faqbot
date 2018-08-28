@@ -43,8 +43,8 @@ public class FaqSolr {
         query.set(CommonParams.Q,testo);
 
 
-        query.setRequestHandler(applicationBuilder.getMessage("solr.requestHandler"));
-        String url = applicationBuilder.getMessage("solr.url");
+        query.setRequestHandler(applicationBuilder.getMessageApplication("solr.requestHandler"));
+        String url = applicationBuilder.getMessageApplication("solr.url");
 
 
 
