@@ -1,5 +1,7 @@
 package it.trentinodigitale.faq.commands;
 
+import it.chatbase.client.ChatbaseClient;
+import it.chatbase.generic.GenericMessageBuilder;
 import it.trentinodigitale.faq.ContextBot;
 import it.trentinodigitale.faq.utils.ApplicationBuilder;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -13,7 +15,9 @@ public abstract class Commands {
 
 
 
-    protected ApplicationBuilder applicationBuilder = new ApplicationBuilder();
+    ApplicationBuilder applicationBuilder = new ApplicationBuilder();
+    ChatbaseClient chatbaseClient = new ChatbaseClient();
+    GenericMessageBuilder genericMessageBuilder = new GenericMessageBuilder();
 
     protected Update update;
 

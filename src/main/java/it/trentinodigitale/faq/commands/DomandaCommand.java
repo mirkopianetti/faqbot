@@ -24,7 +24,7 @@ import java.util.List;
 
 public class DomandaCommand extends Commands{
 
-    GenericMessageBuilder genericMessageBuilder = new GenericMessageBuilder();
+
 
     public DomandaCommand(Update update) {
         super();
@@ -37,6 +37,8 @@ public class DomandaCommand extends Commands{
 
         SendMessage message = new SendMessage().setChatId(context.utilityBot.getChatID(update));
 
+
+
         StringBuffer testoDiPresentazione = new StringBuffer("\n");
 
         try {
@@ -48,42 +50,23 @@ public class DomandaCommand extends Commands{
             ricercheDB.insertDocument(new Integer(message.getChatId()),update.getMessage().getText(),listaRisultati.size());
 
 
-            //Chiamo il client Chatbase per le statistiche
-
-/*            String jsonString = new JSONObject()
-                    .put("api_key", applicationBuilder.getMessageApplication("chatBase.apiKey"))
-                    .put("type",applicationBuilder.getMessageApplication("chatBase.type"))
-                    .put("platform", "Telegram")
-                    .put("intent", "domanda")
-                    .put("message", update.getMessage().getText())
-                    .put("user_id", message.getChatId()).toString();
-
-            clientHttpJson.sendPost(applicationBuilder.getMessageApplication("chatBase.url"),jsonString);*/
-
-
-
-
-            GenericMessage genericMessage = genericMessageBuilder
-                    .withVersion("0.1")
-                    .withType(Type.BOT.getType())
-                    .withUserId(message.getChatId())
-                    .withKey(applicationBuilder.getMessageApplication("chatBase.apiKey"))
-                    .withMessage(update.getMessage().getText())
-                    .withNotHandled(false)
-                    .withIntent("domanda")
-                    .withPlatform(Platform.TELEGRAM.getPlatform()).build();
-
-
-
-            ChatbaseClient chatbaseClient = new ChatbaseClient();
-            ChatBaseResponse chatBaseResponse =  chatbaseClient.sendGenericMessage(genericMessage);
-
-            System.out.println(chatBaseResponse.getReason());
-
-
-
             if (listaRisultati.size()==0){
                 testoDiPresentazione.append("NON ho trovato risposte inerenti la dua domanda, puoi riformularla in modo differente?: \n");
+
+                 chatbaseClient = new ChatbaseClient();
+
+                 ChatBaseResponse chatBaseResponse =  chatbaseClient.sendGenericMessage(
+                        genericMessageBuilder
+                                .withMessage(update.getMessage().getText())
+                                .withVersion("0.1")
+                                .withType(Type.USER.getType())
+                                .withUserId(message.getChatId())
+                                .withKey(applicationBuilder.getMessageApplication("chatBase.apiKey"))
+                                .withNotHandled(true)
+                                .withPlatform(Platform.TELEGRAM.getPlatform())
+                                .withIntent("start").build());
+                System.out.println(" DomandaCommand - 2 " +  chatBaseResponse.toString());
+
             }else {
                 if (listaRisultati.size()>0) {
 
@@ -92,6 +75,21 @@ public class DomandaCommand extends Commands{
                             .findFirst().get();
 
                     scriviPrimaFaq(solrDocument, testoDiPresentazione, message);
+
+                    ChatBaseResponse chatBaseResponse =  chatbaseClient.sendGenericMessage(
+                            genericMessageBuilder
+                                    .withMessage(solrDocument.getFieldValue("domanda").toString())
+                                    .withVersion("0.1")
+                                    .withType(Type.BOT.getType())
+                                    .withUserId(message.getChatId())
+                                    .withKey(applicationBuilder.getMessageApplication("chatBase.apiKey"))
+                                    .withNotHandled(false)
+                                    .withPlatform(Platform.TELEGRAM.getPlatform())
+                                    .withIntent("start").build());
+                    System.out.println(" DomandaCommand - 2 " +  chatBaseResponse.toString());
+
+
+
                 }
                 if (listaRisultati.size()>1) {
                     preparaBottoni(message);
@@ -117,11 +115,6 @@ public class DomandaCommand extends Commands{
         stringBuffer.append("<b>" + solrDocument.getFieldValue("domanda")  + "</b> \n" );
 
         String risposta = solrDocument.getFieldValue("risposta").toString();
-
-
-        ChatbaseClient chatbaseClient = new ChatbaseClient();
-        ChatBaseResponse chatBaseResponse =  chatbaseClient.sendGenericMessage(genericMessageBuilder.withMessage(risposta).build());
-        System.out.println(chatBaseResponse.getReason());
 
         stringBuffer.append(risposta.length()>200?risposta.substring(0,200):risposta + "\n");
 
@@ -162,9 +155,6 @@ public class DomandaCommand extends Commands{
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-
-//        context.message_text
-
 
         rowInline.add(new InlineKeyboardButton().setText(EmojiParser.parseToUnicode(" :mega: ALTRE RISPOSTE" )).setCallbackData("OTHER:param:" ));
         rowsInline.add(rowInline);
